@@ -1,0 +1,280 @@
+%Function to create function handles for orientation angle matrices 
+%and other relevent information
+function [C,B,P] = ERS(in,str)
+%C is the orientation angle DCM function handle
+
+%B is a matrix that takes an input of column vector w in b frame 
+%and outputs theta dot column vector
+
+%P is used to find the angles for a rotation given the DCM element values
+%P is an array that gives the sign (-1 or +1) of each of the elements 
+%needed to find angles then a 1 for initial sine element or 2 for 
+%initial cosine element then the (row,column) location of s2 or c2 then s3 
+%then c3 then s1 then c1
+
+a = floor(in/100);
+in = in - a*100;
+b = floor(in/10);
+c = in - b*10;
+%BODY ROTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if str == 'b'
+    if a == 1
+        if b == 2
+            if c == 1
+                disp('121')
+                %121
+            elseif c == 3
+                %123
+                 C = @(x)...
+                    [cos(x(2))*cos(x(3)),...
+                    -cos(x(2))*sin(x(3)),...
+                    sin(x(2));...
+                    sin(x(1))*sin(x(2))*cos(x(3))+sin(x(3))*cos(x(1)),...
+                    -sin(x(1))*sin(x(2))*sin(x(3))+cos(x(3))*cos(x(1)),...
+                    -sin(x(1))*cos(x(2));...
+                    -cos(x(1))*sin(x(2))*cos(x(3))+sin(x(3))*sin(x(1)),...
+                    cos(x(1))*sin(x(2))*sin(x(3))+cos(x(3))*sin(x(1)),...
+                    cos(x(1))*cos(x(2))];  
+                
+                 B = @(x)...
+                    1/cos(x(2))*[cos(x(3)), -sin(x(3)), 0;...
+                    cos(x(2))*sin(x(3)), cos(x(2))*cos(x(3)), 0;...
+                    -sin(x(2))*cos(x(3)), sin(x(2))*sin(x(3)), cos(x(2))];
+                
+             P = {[1,-1,1,-1,1],1,[1,3],[1,2],[1,1],[2,3],[3,3]};
+                
+            else
+                warning('bad sequence')
+            end
+        elseif b == 3
+            if c == 1
+                disp('131')
+                %131
+            elseif c == 2
+                disp('132')
+                %132
+            else 
+                warning('bad sequence')
+            end
+        else
+            warning('bad sequence')
+        end
+    elseif a == 2
+        if b == 1
+            if c == 2
+                %212
+                C = @(x)...
+                    [-sin(x(1))*cos(x(2))*sin(x(3))+cos(x(3))*cos(x(1)),...
+                    sin(x(1))*sin(x(2)),...
+                    sin(x(1))*cos(x(2))*cos(x(3))+sin(x(3))*cos(x(1));...
+                    sin(x(2))*sin(x(3)),...
+                    cos(x(2)),...
+                    -sin(x(2))*cos(x(3));...
+                    -cos(x(1))*cos(x(2))*sin(x(3))-cos(x(3))*sin(x(1)),...
+                    cos(x(1))*sin(x(2)),...
+                    cos(x(1))*cos(x(2))*cos(x(3))-sin(x(3))*sin(x(1))];
+                
+                 B = @(x)...
+                    1/sin(x(2))*[sin(x(3)), 0, -cos(x(3));...
+                    sin(x(2))*cos(x(3)), 0, sin(x(2))*sin(x(3));...
+                    -cos(x(2))*sin(x(3)), sin(x(2)), cos(x(2))*cos(x(3))];
+                
+                P = {[1,1,-1,1,1],2,[2,2],[2,1],[2,3],[1,2],[3,2]};
+
+            elseif c == 3
+                disp('213')
+                %213
+            else
+                warning('bad sequence')
+            end
+        elseif b == 3
+            if c == 1
+                disp('231')
+                %231
+            elseif c == 2 
+                disp('232')
+                %232
+            else
+                warning('bad sequence')
+            end
+        else
+            warning('bad sequence')
+        end
+    elseif a == 3
+        if b == 1
+            if c == 2
+                disp('312')
+                %312
+            elseif c == 3
+
+                %313
+                C = @(x)...
+                    [cos(x(3))*cos(x(1))-sin(x(3))*cos(x(2))*sin(x(1)),...
+                    cos(x(3))*sin(x(1))+sin(x(3))*cos(x(2))*cos(x(1)),...
+                    sin(x(3))*sin(x(2));...
+                    -sin(x(3))*cos(x(1))-cos(x(3))*cos(x(2))*sin(x(1)),...
+                    -sin(x(3))*sin(x(1))+cos(x(3))*cos(x(2))*cos(x(1)),...
+                    cos(x(3))*sin(x(2));...
+                    sin(x(2))*sin(x(1)),...
+                    -sin(x(2))*cos(x(1)),...
+                    cos(x(2))]';
+                
+                 B = @(x)...
+                    1/sin(x(2))*[sin(x(3)), cos(x(3)), 0;...
+                    sin(x(2))*cos(x(3)), -sin(x(2))*sin(x(3)), 0;...
+                    -cos(x(2))*sin(x(3)), -cos(x(2))*cos(x(3)), sin(x(2))];
+                
+                P = {[1,1,1,1,-1],2,[3,3],[3,1],[3,2],[1,3],[2,3]};
+                
+            else
+                warning('bad sequence')
+            end
+        elseif b == 2
+            if c == 1
+                disp('321')
+                %321
+            elseif c == 3
+                disp('323')
+                %323
+            else
+                warning('bad sequence')
+            end
+        else
+            warning('bad sequence')
+        end
+    end
+
+end
+%SPACE ROTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if str == 's'
+    if a == 1
+        if b == 2
+            if c == 1
+            
+                %121
+                C = @(x)...
+                    [cos(x(2)), sin(x(1))*sin(x(2)), cos(x(1))*sin(x(2));...
+                    sin(x(2))*sin(x(3)),...
+                    -sin(x(1))*cos(x(2))*sin(x(3))+cos(x(3))*cos(x(1)),...
+                    -cos(x(1))*cos(x(2))*sin(x(3))-cos(x(3))*sin(x(1));...
+                    -sin(x(2))*cos(x(3)),...
+                    sin(x(1))*cos(x(2))*cos(x(3))+sin(x(3))*cos(x(1)),...
+                    cos(x(1))*cos(x(2))*cos(x(3)) - sin(x(3))*sin(x(1))];
+                
+                B = @(x)...
+                    1/sin(x(2))*[sin(x(2)),...
+                    -sin(x(1))*cos(x(2)),-cos(x(1))*cos(x(2));...
+                    0,cos(x(1))*sin(x(2)),-sin(x(1))*sin(x(2));...
+                    0,sin(x(1)),cos(x(1))];
+                
+                P = {[1,1,-1,1,1],2,[1,1],[2,1],[3,1],[1,2],[1,3]};
+                
+            elseif c == 3
+
+                %123
+                
+            else
+                warning('bad sequence')
+            end
+        elseif b == 3
+            if c == 1
+                disp('131')
+                %131
+            elseif c == 2
+                disp('132')
+                %132
+            else 
+                warning('bad sequence')
+            end
+        else
+            warning('bad sequence')
+        end
+    elseif a == 2
+        if b == 1
+            if c == 2
+                %212
+                C = @(x)...
+                    [-sin(x(1))*cos(x(2))*sin(x(3))+cos(x(3))*cos(x(1)),...
+                    sin(x(2))*sin(x(3)),...
+                    cos(x(1))*cos(x(2))*sin(x(3))+cos(x(3))*sin(x(1));...
+                    sin(x(1))*sin(x(2)),...
+                    cos(x(2)),...
+                    -cos(x(1))*sin(x(2));...
+                    -sin(x(1))*cos(x(2))*cos(x(3))-sin(x(3))*cos(x(1)),...
+                    sin(x(2))*cos(x(3)),...
+                    cos(x(1))*cos(x(2))*cos(x(3))-sin(x(3))*sin(x(1))];
+
+                B = @(x)...
+                    1/sin(x(2))*[-sin(x(1))*cos(x(2)),...
+                    sin(x(2)), cos(x(1))*cos(x(2));...
+                    cos(x(1))*sin(x(2)), 0, sin(x(1))*sin(x(2));...
+                    sin(x(1)), 0, -cos(x(1))];
+                
+                P = {[1,1,1,1,-1],2,[2,2],[1,2],[3,2],[2,1],[2,3]};
+                
+            elseif c == 3
+                disp('213')
+                %213
+            else
+                warning('bad sequence')
+            end
+        elseif b == 3
+            if c == 1
+                disp('231')
+                %231
+            elseif c == 2 
+                %232
+                C = @(x)...
+                    [-sin(x(1))*cos(x(2))*sin(x(3))+cos(x(3))*cos(x(1)),...
+                    sin(x(2))*sin(x(3)),...
+                    cos(x(1))*cos(x(2))*sin(x(3))+cos(x(3))*sin(x(1));...
+                    sin(x(1))*sin(x(2)), cos(x(2)), -cos(x(1))*sin(x(2));...
+                    -sin(x(1))*cos(x(2))-sin(x(3))*cos(x(1)),...
+                    sin(x(2))*cos(x(3)),...
+                    cos(x(1))*cos(x(2))*cos(x(3))-sin(x(3))*sin(x(1))];
+                
+                B = @(x)...
+                    [-cos(x(1))*cos(x(2))/sin(x(2)), 1,...
+                    -sin(x(1))*cos(x(2))/sin(x(2));...
+                    -sin(x(1)), 0, cos(x(1));...
+                    cos(x(1))/sin(x(2)), 0, sin(x(1))/sin(x(2))];
+                
+                P = {[1,1,-1,1,1],2,[2,2],[3,2],[1,2],[2,3],[2,1]};
+                
+            else
+                warning('bad sequence')
+            end
+        else
+            warning('bad sequence')
+        end
+    elseif a == 3
+        if b == 1
+            if c == 2
+                disp('312')
+                %312
+            elseif c == 3
+
+                %313;
+
+            else
+                warning('bad sequence')
+            end
+        elseif b == 2
+            if c == 1
+                disp('321')
+                %321
+            elseif c == 3
+                disp('323')
+                %323
+            else
+                warning('bad sequence')
+            end
+        else
+            warning('bad sequence')
+        end
+    end
+
+end
+end
