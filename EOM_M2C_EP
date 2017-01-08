@@ -1,5 +1,5 @@
-%function for integrating circular orbit with second order moment
-%approximation where a3 is radial direction and c2 is axis of symmetry
+%function for integrating orientation in circular orbit with second order moment
+%approximation where a3 is radial direction and c2 is axis of symmetry (euler parameter variable set)
 function xdot = EOM_M2C_EP(~,x,I,J,u)
 
 w = x(1:3); eps = x(4:7);
